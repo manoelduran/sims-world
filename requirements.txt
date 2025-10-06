@@ -1,0 +1,18 @@
+# Web Framework e Servidor
+fastapi
+uvicorn[standard]
+pydantic
+
+# Banco de Dados e ORM
+sqlalchemy
+psycopg2-binary
+alembic # Para migrações de banco de dados
+
+# LangChain, LangGraph e Gemini (já podemos incluir)
+langchain
+langgraph
+langchain-google-genai
+google-generativeai
+
+# Utilitários
+python-dotenv
