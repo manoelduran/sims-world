@@ -1,28 +1,84 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from uuid import UUID
-from typing import List, Optional
+from typing import Optional
+from modules.sims.domain.entities.relationship import Relationship
+from modules.sims.infrastructure.persistence.needs_model import SimNeedsModel
+from modules.sims.infrastructure.persistence.relationship_model import RelationshipModel
+from modules.sims.infrastructure.persistence.sim_model import SimModel
+from modules.sims.infrastructure.persistence.status_model import SimStatusModel
 from ...domain.entities.sim import Sim
+from ...domain.entities.needs import SimNeeds
 from ...application.ports.i_sim_repository import ISimRepository
-from .sim_model import SimModel
+
 
 class PostgresSimRepository(ISimRepository):
     def __init__(self, db_session: Session):
         self._db = db_session
 
     def save(self, sim: Sim) -> Sim:
-        sim_model = SimModel(**sim.model_dump())
+        sim_data = sim.model_dump(
+            exclude={"needs", "status", "skills", "relationships", "memories"}
+        )
+
+        sim_model = SimModel(**sim_data)
+        sim_model.needs = SimNeedsModel(**sim.needs.model_dump())
+        sim_model.status = SimStatusModel(**sim.status.model_dump())
 
         self._db.add(sim_model)
         self._db.commit()
-        self._db.refresh(sim_model)
 
-        return Sim.model_validate(sim_model)
+        return self.find_full_by_id(sim_model.id)
+
+    def find_full_by_id(self, sim_id: UUID) -> Optional[Sim]:
+        sim_model = (
+            self._db.query(SimModel)
+            .options(
+                joinedload(SimModel.needs),
+                joinedload(SimModel.status),
+                joinedload(SimModel.skills),
+                joinedload(SimModel.memories),
+            )
+            .filter(SimModel.id == sim_id)
+            .first()
+        )
+        if not sim_model:
+            return None
+
+        relationships_model = (
+            self._db.query(RelationshipModel)
+            .filter(
+                (RelationshipModel.sim_a_id == sim_id)
+                | (RelationshipModel.sim_b_id == sim_id)
+            )
+            .all()
+        )
+
+        sim_entity = Sim.model_validate(sim_model)
+
+        for rel in relationships_model:
+            target_id = rel.sim_b_id if rel.sim_a_id == sim_id else rel.sim_a_id
+            sim_entity.relationships.append(
+                Relationship(target_sim_id=target_id, **rel.__dict__)
+            )
+
+        return sim_entity
+
+    def update_needs(self, sim_id: UUID, needs: SimNeeds) -> Optional[SimNeeds]:
+        needs_model = (
+            self._db.query(SimNeedsModel).filter(SimNeedsModel.sim_id == sim_id).first()
+        )
+        if not needs_model:
+            return None
+
+        needs_model.hunger = needs.hunger
+        needs_model.energy = needs.energy
+        needs_model.social = needs.social
+        needs_model.hygiene = needs.hygiene
+
+        self._db.commit()
+        self._db.refresh(needs_model)
+
+        return SimNeeds.model_validate(needs_model)
 
     def find_by_id(self, id: UUID) -> Optional[Sim]:
-        sim_model = self._db.query(SimModel).filter(SimModel.id == id).first()
-        if sim_model:
-            return Sim.model_validate(sim_model)
-        return None
-
-    def find_by_personality(self, personality: str) -> List[Sim]:
-        return []
+        return self.find_full_by_id(id)
