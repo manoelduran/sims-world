@@ -1,11 +1,12 @@
 from sqlalchemy.orm import Session, joinedload
 from uuid import UUID
 from typing import Optional
-from modules.sims.domain.entities.relationship import Relationship
+
 from modules.sims.infrastructure.persistence.needs_model import SimNeedsModel
 from modules.sims.infrastructure.persistence.relationship_model import RelationshipModel
 from modules.sims.infrastructure.persistence.sim_model import SimModel
 from modules.sims.infrastructure.persistence.status_model import SimStatusModel
+
 from ...domain.entities.sim import Sim
 from ...domain.entities.needs import SimNeeds
 from ...application.ports.i_sim_repository import ISimRepository
@@ -15,14 +16,14 @@ class PostgresSimRepository(ISimRepository):
     def __init__(self, db_session: Session):
         self._db = db_session
 
-    def save(self, sim: Sim) -> Sim:
-        sim_data = sim.model_dump(
+    def save(self, entity: Sim) -> Sim:
+        sim_data = entity.model_dump(
             exclude={"needs", "status", "skills", "relationships", "memories"}
         )
 
         sim_model = SimModel(**sim_data)
-        sim_model.needs = SimNeedsModel(**sim.needs.model_dump())
-        sim_model.status = SimStatusModel(**sim.status.model_dump())
+        sim_model.needs = SimNeedsModel(**entity.needs.model_dump())
+        sim_model.status = SimStatusModel(**entity.status.model_dump())
 
         self._db.add(sim_model)
         self._db.commit()
@@ -36,6 +37,8 @@ class PostgresSimRepository(ISimRepository):
                 joinedload(SimModel.needs),
                 joinedload(SimModel.status),
                 joinedload(SimModel.skills),
+                # Eager loading de relacionamentos e memórias pode ser pesado,
+                # mas para um único Sim é geralmente aceitável.
                 joinedload(SimModel.memories),
             )
             .filter(SimModel.id == sim_id)
@@ -44,6 +47,7 @@ class PostgresSimRepository(ISimRepository):
         if not sim_model:
             return None
 
+        # Relações precisam ser carregadas e mapeadas com cuidado
         relationships_model = (
             self._db.query(RelationshipModel)
             .filter(
@@ -55,8 +59,12 @@ class PostgresSimRepository(ISimRepository):
 
         sim_entity = Sim.model_validate(sim_model)
 
+        from ...domain.entities.relationship import Relationship
+
         for rel in relationships_model:
-            target_id = rel.sim_b_id if rel.sim_a_id == sim_id else rel.sim_a_id
+            target_id = (
+                rel.sim_b_id if str(rel.sim_a_id) == str(sim_id) else rel.sim_a_id
+            )
             sim_entity.relationships.append(
                 Relationship(target_sim_id=target_id, **rel.__dict__)
             )
