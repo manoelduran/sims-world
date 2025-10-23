@@ -13,7 +13,6 @@ class CreateSimHandler:
         sim_to_create = Sim(
             name=command.name,
             personality_summary=command.personality,
-            world_id=command.world_id,
             age_in_days=25,
             life_stage="adult",
             is_alive=True,

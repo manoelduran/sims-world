@@ -1,5 +1,6 @@
 from modules.sims.application.exceptions.application_exceptions import SimNotFoundError
 from modules.sims.application.ports.i_sim_repository import ISimRepository
+from uuid import UUID
 from modules.sims.application.queries.impl.get_full_sim_status import (
     GetFullSimStatusQuery,
 )
@@ -11,7 +12,8 @@ class GetFullSimStatusHandler:
         self.sim_repository = sim_repository
 
     def handle(self, query: GetFullSimStatusQuery) -> Sim:
-        sim = self.sim_repository.find_full_by_id(query.sim_id)
+        sim_id = UUID(str(query.sim_id))
+        sim = self.sim_repository.find_full_by_id(sim_id)
         if not sim:
-            raise SimNotFoundError(sim_id=query.sim_id)
+            raise SimNotFoundError(sim_id=sim_id)
         return sim
