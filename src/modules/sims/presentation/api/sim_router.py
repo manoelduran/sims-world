@@ -1,22 +1,31 @@
-from fastapi import APIRouter, Depends, status
-from modules.sims.application.commands.handlers.create_sim_handler import (
-    CreateSimHandler,
+from fastapi import APIRouter, Depends, Request, status
+
+
+from src.modules.sims.presentation.dto.get_sim_by_id_dto import GetSimByIdDto
+from src.modules.sims.presentation.response.get_sim_by_id_response import (
+    GetSimByIdResponse,
 )
-from modules.sims.application.exceptions.application_exceptions import SimNotFoundError
-from modules.sims.application.queries.handlers.get_sim_by_id_handler import (
+from src.modules.sims.presentation.dto.create_sim_dto import CreateSimDto
+from src.modules.sims.presentation.response.create_sim_response import CreateSimResponse
+from src.modules.sims.application.queries.handlers.get_sim_by_id_handler import (
     GetSimByIdHandler,
 )
-from modules.sims.presentation.dto.create_sim_dto import CreateSimDto
-from modules.sims.presentation.dto.get_sim_by_id_dto import GetSimByIdDto
-from modules.sims.presentation.exceptions import sim_not_found_exception_handler
-from modules.sims.presentation.response.create_sim_response import CreateSimResponse
-from modules.sims.presentation.response.get_sim_by_id_response import GetSimByIdResponse
-from .sim_controller import SimController
-from ...dependencies import get_create_sim_handler, get_get_sim_by_id_handler
-
-router = APIRouter(
-    exception_handlers={SimNotFoundError: sim_not_found_exception_handler}
+from src.modules.sims.dependencies import (
+    get_create_sim_handler,
+    get_get_sim_by_id_handler,
 )
+from src.modules.sims.application.commands.handlers.create_sim_handler import (
+    CreateSimHandler,
+)
+from src.modules.sims.presentation.exceptions import sim_not_found_exception_handler
+from src.modules.sims.application.exceptions.application_exceptions import (
+    SimNotFoundError,
+)
+
+from .sim_controller import SimController
+
+
+router = APIRouter()
 
 
 def get_sim_controller(

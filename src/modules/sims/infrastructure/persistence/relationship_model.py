@@ -16,4 +16,4 @@ class RelationshipModel(Base):
     relationship_score = Column(Integer, default=0, nullable=False)
     romance_score = Column(Integer, default=0, nullable=False)
     commitment_level = Column(String(50))
-    __table_args__ = CheckConstraint("sim_a_id < sim_b_id")
+    __table_args__ = (CheckConstraint("sim_a_id < sim_b_id"),)

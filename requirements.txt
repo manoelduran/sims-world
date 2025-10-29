@@ -4,7 +4,7 @@ pydantic
 
 sqlalchemy
 psycopg2-binary
-pgvector-sqlalchemy
+pgvector
 alembic
 
 

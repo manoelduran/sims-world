@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from sqlalchemy import UUID
+from uuid import UUID
 
 
 class GetFullSimStatusQuery(BaseModel):

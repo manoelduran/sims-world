@@ -1,8 +1,8 @@
 from abc import abstractmethod
 from typing import Optional
 from uuid import UUID
-from modules.sims.domain.entities.needs import SimNeeds
-from shared.domain.repositories.i_generic_repository import IGenericRepository
+from ...domain.entities.needs import SimNeeds
+from src.shared.domain.repositories.i_generic_repository import IGenericRepository
 from ...domain.entities.sim import Sim
 
 

@@ -2,10 +2,12 @@ from sqlalchemy.orm import Session, joinedload
 from uuid import UUID
 from typing import Optional
 
-from modules.sims.infrastructure.persistence.needs_model import SimNeedsModel
-from modules.sims.infrastructure.persistence.relationship_model import RelationshipModel
-from modules.sims.infrastructure.persistence.sim_model import SimModel
-from modules.sims.infrastructure.persistence.status_model import SimStatusModel
+from src.modules.sims.infrastructure.persistence.needs_model import SimNeedsModel
+from src.modules.sims.infrastructure.persistence.relationship_model import (
+    RelationshipModel,
+)
+from src.modules.sims.infrastructure.persistence.sim_model import SimModel
+from src.modules.sims.infrastructure.persistence.status_model import SimStatusModel
 
 from ...domain.entities.sim import Sim
 from ...domain.entities.needs import SimNeeds

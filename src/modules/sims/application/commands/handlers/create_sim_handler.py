@@ -1,7 +1,7 @@
-from modules.sims.application.commands.impl.create_sim import CreateSimCommand
-from modules.sims.application.ports.i_sim_repository import ISimRepository
-from modules.sims.domain.entities.needs import SimNeeds
-from modules.sims.domain.entities.status import SimStatus
+from ....application.commands.impl.create_sim import CreateSimCommand
+from ....application.ports.i_sim_repository import ISimRepository
+from ....domain.entities.needs import SimNeeds
+from ....domain.entities.status import SimStatus
 from ....domain.entities.sim import Sim
 
 

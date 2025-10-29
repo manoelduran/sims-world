@@ -5,8 +5,13 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app/src
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
     env_file:
       - ./.env
+    environment:
+      # Isso garante que a variável esteja disponível para 'exec'
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
 

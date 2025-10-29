@@ -1,15 +1,17 @@
-from modules.sims.application.commands.handlers.create_sim_handler import (
+from src.modules.sims.application.commands.handlers.create_sim_handler import (
     CreateSimHandler,
 )
-from modules.sims.application.commands.impl.create_sim import CreateSimCommand
-from modules.sims.application.queries.handlers.get_sim_by_id_handler import (
+from src.modules.sims.application.commands.impl.create_sim import CreateSimCommand
+from src.modules.sims.application.queries.handlers.get_sim_by_id_handler import (
     GetSimByIdHandler,
 )
-from modules.sims.application.queries.impl.get_sim_by_id import GetSimByIdQuery
-from modules.sims.presentation.dto.create_sim_dto import CreateSimDto
-from modules.sims.presentation.dto.get_sim_by_id_dto import GetSimByIdDto
-from modules.sims.presentation.response.create_sim_response import CreateSimResponse
-from modules.sims.presentation.response.get_sim_by_id_response import GetSimByIdResponse
+from src.modules.sims.application.queries.impl.get_sim_by_id import GetSimByIdQuery
+from src.modules.sims.presentation.dto.create_sim_dto import CreateSimDto
+from src.modules.sims.presentation.dto.get_sim_by_id_dto import GetSimByIdDto
+from src.modules.sims.presentation.response.create_sim_response import CreateSimResponse
+from src.modules.sims.presentation.response.get_sim_by_id_response import (
+    GetSimByIdResponse,
+)
 
 
 class SimController:
@@ -22,7 +24,10 @@ class SimController:
         self.get_sim_by_id_handler = get_sim_by_id_handler
 
     def create_new_sim(self, sim_data: CreateSimDto) -> CreateSimResponse:
-        command = CreateSimCommand(name=sim_data.name, personality=sim_data.personality)
+        command = CreateSimCommand(
+            name=sim_data.name,
+            personality=sim_data.personality,
+        )
 
         created_sim_entity = self.create_sim_handler.handle(command)
 

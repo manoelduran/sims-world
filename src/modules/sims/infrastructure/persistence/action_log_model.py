@@ -18,4 +18,3 @@ class ActionLogModel(Base):
     action_type = Column(String(50), nullable=False)
     description = Column(Text)
     target_sim_id = Column(UUID(as_uuid=True), ForeignKey("sims.id"))
-    target_object_id = Column(UUID(as_uuid=True), ForeignKey("objetos.id"))

@@ -1,7 +1,7 @@
-from modules.sims.application.exceptions.application_exceptions import SimNotFoundError
-from modules.sims.application.ports.i_sim_repository import ISimRepository
-from modules.sims.application.queries.impl.get_sim_by_id import GetSimByIdQuery
-from modules.sims.domain.entities.sim import Sim
+from ....domain.entities.sim import Sim
+from ...queries.impl.get_sim_by_id import GetSimByIdQuery
+from ...ports.i_sim_repository import ISimRepository
+from ...exceptions.application_exceptions import SimNotFoundError
 
 
 class GetSimByIdHandler:

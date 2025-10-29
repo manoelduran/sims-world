@@ -1,5 +1,5 @@
+from uuid import UUID
 from pydantic import BaseModel
-from sqlalchemy import UUID
 
 
 class GetSimByIdResponse(BaseModel):

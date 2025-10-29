@@ -1,10 +1,10 @@
-from modules.sims.application.exceptions.application_exceptions import SimNotFoundError
-from modules.sims.application.ports.i_sim_repository import ISimRepository
+from src.modules.sims.application.ports.i_sim_repository import ISimRepository
+from ...exceptions.application_exceptions import SimNotFoundError
 from uuid import UUID
-from modules.sims.application.queries.impl.get_full_sim_status import (
+from src.modules.sims.application.queries.impl.get_full_sim_status import (
     GetFullSimStatusQuery,
 )
-from modules.sims.domain.entities.sim import Sim
+from src.modules.sims.domain.entities.sim import Sim
 
 
 class GetFullSimStatusHandler:
