@@ -53,6 +53,7 @@ def create_sim_route(
     "/sims/{sim_id}", response_model=GetSimByIdResponse, summary="Busca um Sim por ID"
 )
 def get_sim_by_id_route(
-    sim_data: GetSimByIdDto, controller: SimController = Depends(get_sim_controller)
+    sim_data: GetSimByIdDto = Depends(),
+    controller: SimController = Depends(get_sim_controller),
 ):
-    return controller.get_sim_by_id(sim_id=sim_data.sim_id)
+    return controller.get_sim_by_id(sim_data=sim_data)

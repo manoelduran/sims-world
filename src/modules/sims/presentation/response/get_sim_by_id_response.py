@@ -3,6 +3,9 @@ from pydantic import BaseModel
 
 
 class GetSimByIdResponse(BaseModel):
-    sim_id: UUID
+    id: UUID
     name: str
-    personality: str
+    personality_summary: str
+
+    class Config:
+        from_attributes = True

@@ -19,4 +19,5 @@ class CreateSimHandler:
             needs=SimNeeds(hunger=100, energy=100, social=75, hygiene=100),
             status=SimStatus(current_feeling="normal"),
         )
+        print("Creating SIM:", sim_to_create)
         return self.sim_repository.save(sim_to_create)

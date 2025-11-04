@@ -2,13 +2,15 @@ from sqlalchemy.orm import Session, joinedload
 from uuid import UUID
 from typing import Optional
 
+from src.modules.sims.domain.entities.relationship import Relationship
 from src.modules.sims.infrastructure.persistence.needs_model import SimNeedsModel
 from src.modules.sims.infrastructure.persistence.relationship_model import (
     RelationshipModel,
 )
 from src.modules.sims.infrastructure.persistence.sim_model import SimModel
 from src.modules.sims.infrastructure.persistence.status_model import SimStatusModel
-
+from src.modules.sims.infrastructure.persistence.skill_model import SkillModel
+from src.modules.sims.infrastructure.persistence.memory_models import MemoryModel
 from ...domain.entities.sim import Sim
 from ...domain.entities.needs import SimNeeds
 from ...application.ports.i_sim_repository import ISimRepository
@@ -61,15 +63,17 @@ class PostgresSimRepository(ISimRepository):
 
         sim_entity = Sim.model_validate(sim_model)
 
-        from ...domain.entities.relationship import Relationship
-
         for rel in relationships_model:
             target_id = (
                 rel.sim_b_id if str(rel.sim_a_id) == str(sim_id) else rel.sim_a_id
             )
-            sim_entity.relationships.append(
-                Relationship(target_sim_id=target_id, **rel.__dict__)
+            relationship_entity = Relationship(
+                target_sim_id=target_id,
+                relationship_score=rel.relationship_score,
+                romance_score=rel.romance_score,
+                commitment_level=rel.commitment_level,
             )
+            sim_entity.relationships.append(relationship_entity)
 
         return sim_entity
 

@@ -1,6 +1,6 @@
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class GetSimByIdDto(BaseModel):
-    sim_id: UUID = Field(..., description="O ID do Sim a ser buscado.")
+    sim_id: UUID

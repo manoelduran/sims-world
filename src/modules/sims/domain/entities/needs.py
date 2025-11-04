@@ -6,3 +6,6 @@ class SimNeeds(BaseModel):
     energy: int
     social: int
     hygiene: int
+
+    class Config:
+        from_attributes = True

@@ -8,3 +8,6 @@ class Relationship(BaseModel):
     relationship_score: int
     romance_score: int
     commitment_level: Optional[str] = None
+
+    class Config:
+        from_attributes = True
