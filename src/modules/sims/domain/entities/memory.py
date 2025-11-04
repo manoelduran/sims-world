@@ -6,3 +6,6 @@ class Memory(BaseModel):
     id: UUID
     description: str
     importance_score: int
+
+    class Config:
+        from_attributes = True
