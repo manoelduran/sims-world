@@ -1,3 +1,12 @@
+from uuid import UUID
+from src.modules.sims.application.commands.impl.run_sim_decision_cycle import (
+    RunSimDecisionCycleCommand,
+)
+from src.modules.sims.presentation.dto.perceive_dto import PerceiveDto
+from src.modules.sims.presentation.response.action_response import ActionResponse
+from src.modules.sims.application.commands.handlers.run_sim_decision_cycle_handler import (
+    RunSimDecisionCycleHandler,
+)
 from src.modules.sims.application.commands.handlers.create_sim_handler import (
     CreateSimHandler,
 )
@@ -19,9 +28,11 @@ class SimController:
         self,
         create_sim_handler: CreateSimHandler,
         get_sim_by_id_handler: GetSimByIdHandler,
+        run_decision_cycle_handler: RunSimDecisionCycleHandler,
     ):
         self.create_sim_handler = create_sim_handler
         self.get_sim_by_id_handler = get_sim_by_id_handler
+        self.run_decision_cycle_handler = run_decision_cycle_handler
 
     def create_new_sim(self, sim_data: CreateSimDto) -> CreateSimResponse:
         command = CreateSimCommand(
@@ -37,3 +48,12 @@ class SimController:
         query = GetSimByIdQuery(sim_id=sim_data.sim_id)
         sim_entity = self.get_sim_by_id_handler.handle(query)
         return GetSimByIdResponse.model_validate(sim_entity)
+
+    def perceive_and_act(self, sim_id: UUID, data: PerceiveDto) -> ActionResponse:
+        command = RunSimDecisionCycleCommand(sim_id=sim_id, perception=data.perception)
+        final_state = self.run_decision_cycle_handler.handle(command)
+        return ActionResponse(
+            action=final_state.get("action"),
+            feeling=final_state.get("feeling"),
+            reflection=final_state.get("reflection"),
+        )

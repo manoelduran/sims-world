@@ -8,7 +8,7 @@ import os
 
 dotenv_path = os.path.join(os.path.dirname(__file__), "..", ".env")
 print(f"--- [env.py] Tentando carregar .env de: {dotenv_path}")  # DEBUG PRINT 1
-
+loaded = load_dotenv(dotenv_path=dotenv_path)
 from alembic import context
 from src.core.database import Base
 from src.modules.sims.infrastructure.persistence.needs_model import *
@@ -17,14 +17,10 @@ from src.modules.sims.infrastructure.persistence.relationship_model import *
 from src.modules.sims.infrastructure.persistence.sim_model import *
 from src.modules.sims.infrastructure.persistence.skill_model import *
 from src.modules.sims.infrastructure.persistence.status_model import *
-
-loaded = load_dotenv(dotenv_path=dotenv_path)
-print(f"--- [env.py] load_dotenv retornou: {loaded}")  # DEBUG PRINT 2
+from src.modules.sims.infrastructure.persistence.action_log_model import *
 
 db_url_from_env = os.getenv("DATABASE_URL")
-print(
-    f"--- [env.py] Valor de DATABASE_URL após load_dotenv: '{db_url_from_env}'"
-)  # DEBUG PRINT 3
+
 
 sys.path.insert(
     0, os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -77,7 +73,6 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
 
-    # Obter a URL diretamente da variável de ambiente
     db_url = os.getenv("DATABASE_URL")
     if not db_url:
         raise ValueError("Environment variable DATABASE_URL is not set.")
