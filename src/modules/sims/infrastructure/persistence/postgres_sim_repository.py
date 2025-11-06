@@ -1,7 +1,11 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 from uuid import UUID
-from typing import Optional
+from typing import List, Optional
 
+from src.modules.sims.domain.entities.memory import Memory
+from src.modules.sims.domain.entities.status import SimStatus
+from src.modules.sims.infrastructure.persistence.action_log_model import ActionLogModel
 from src.modules.sims.domain.entities.relationship import Relationship
 from src.modules.sims.infrastructure.persistence.needs_model import SimNeedsModel
 from src.modules.sims.infrastructure.persistence.relationship_model import (
@@ -96,3 +100,69 @@ class PostgresSimRepository(ISimRepository):
 
     def find_by_id(self, id: UUID) -> Optional[Sim]:
         return self.find_full_by_id(id)
+
+    def add_memory(
+        self, sim_id: UUID, description: str, importance: int, embedding: List[float]
+    ) -> Memory:
+        new_memory = MemoryModel(
+            sim_id=sim_id,
+            description=description,
+            importance_score=importance,
+            embedding=embedding,
+        )
+        self._db.add(new_memory)
+        self._db.commit()
+        self._db.refresh(new_memory)
+        return Memory.model_validate(new_memory)
+
+    def find_relevant_memories(
+        self, sim_id: UUID, embedding: List[float], k: int = 5
+    ) -> List[Memory]:
+        # Lembre-se que você precisa do <-> (distância L2) ou <=> (similaridade de cosseno)
+        # Vamos usar L2, que é o padrão para pgvector
+        results = (
+            self._db.query(MemoryModel)
+            .filter(MemoryModel.sim_id == sim_id)
+            .order_by(MemoryModel.embedding.l2_distance(embedding))
+            .limit(k)
+            .all()
+        )
+        return [Memory.model_validate(mem) for mem in results]
+
+    def get_short_term_memory(self, sim_id: UUID, k: int = 5) -> List[ActionLogModel]:
+        return (
+            self._db.query(ActionLogModel)
+            .filter(ActionLogModel.actor_sim_id == sim_id)
+            .order_by(ActionLogModel.timestamp.desc())
+            .limit(k)
+            .all()
+        )
+
+    def save_action_to_log(
+        self, sim_id: UUID, action_type: str, description: str
+    ) -> ActionLogModel:
+        log_entry = ActionLogModel(
+            timestamp=func.now(),
+            actor_sim_id=sim_id,
+            action_type=action_type,
+            description=description,
+        )
+        self._db.add(log_entry)
+        self._db.commit()
+        self._db.refresh(log_entry)
+        return log_entry
+
+    def update_sim_status(self, sim_id: UUID, feeling: str, action: str) -> SimStatus:
+        status_model = (
+            self._db.query(SimStatusModel)
+            .filter(SimStatusModel.sim_id == sim_id)
+            .first()
+        )
+        if not status_model:
+            return None  # Ou lançar exceção
+
+        status_model.current_feeling = feeling
+        status_model.current_action = action
+        self._db.commit()
+        self._db.refresh(status_model)
+        return SimStatus.model_validate(status_model)

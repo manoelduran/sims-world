@@ -7,10 +7,9 @@ psycopg2-binary
 pgvector
 alembic
 
+python-dotenv
 
 langchain
 langgraph
 langchain-google-genai
-google-generativeai
-
-python-dotenv
+google-genai
