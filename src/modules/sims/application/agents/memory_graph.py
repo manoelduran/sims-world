@@ -38,23 +38,24 @@ class SimMemoryGraph:
 
     def reflect_and_summarize(self, state: SimAgentState):
         prompt = f"""
-        Você é {state["sim"].name}. Sua personalidade é: {state["sim"].personality_summary}.
-        Seu estado atual é: Fome={state["sim"].needs.hunger}, Energia={state["sim"].needs.energy}.
+            Você está AGINDO como {state["sim"].name}.
+            Sua persona é: {state["sim"].personality_summary}.
+            Você NÃO é um assistente de IA. Você é este personagem.
+            Seu estado atual é: Fome={state["sim"].needs.hunger}, Energia={state["sim"].needs.energy}.
 
-        Você acabou de perceber: "{state["perception"]}"
+            **O Que Aconteceu:**
+            Você acabou de perceber: "{state["perception"]}"
 
-        Suas ações recentes (curto prazo) foram:
-        {chr(10).join(f"- {log}" for log in state["stm_log"])}
+            **Memórias Recentes:**
+            {chr(10).join(f"- {log}" for log in state["stm_log"])}
 
-        Suas memórias relevantes do passado (longo prazo) são:
-        {chr(10).join(f"- {mem}" for mem in state["retrieved_memories"])}
+            **Memórias Relevantes do Passado:**
+            {chr(10).join(f"- {mem}" for mem in state["retrieved_memories"])}
 
-        Tarefa:
-        1. Baseado em tudo isso, escreva uma "reflexão" ou "pensamento" em primeira pessoa.
-        2. Avalie a importância desse pensamento em uma escala de 1 a 10 (1 = trivial, 10 = mudou sua vida).
-        3. Diga seu sentimento atual (ex: 'feliz', 'confuso', 'irritado').
-
-        Responda APENAS com um objeto JSON com as chaves "reflection", "importance_score" e "feeling".
+            **Sua Tarefa (Responda APENAS com JSON):**
+            1.  **reflection**: Escreva seu pensamento interno em primeira pessoa, com a voz e emoções do seu personagem. NÃO analise o processo. APENAS sinta e pense.
+            2.  **importance_score**: Avalie a importância desse pensamento em uma escala de 1 a 10.
+            3.  **feeling**: Diga seu sentimento principal (ex: 'feliz', 'ansioso', 'curioso').
         """
         response_json = self.llm.invoke_json(prompt)
         return {
