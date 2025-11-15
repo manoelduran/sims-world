@@ -21,6 +21,13 @@ from src.modules.sims.presentation.response.create_sim_response import CreateSim
 from src.modules.sims.presentation.response.get_sim_by_id_response import (
     GetSimByIdResponse,
 )
+from src.modules.sims.application.commands.handlers.set_sim_profession_handler import (
+    SetSimProfessionHandler,
+)
+from src.modules.sims.application.commands.impl.set_sim_profession import (
+    SetSimProfessionCommand,
+)
+from ..dto.set_profession_dto import SetProfessionDto
 
 
 class SimController:
@@ -29,10 +36,12 @@ class SimController:
         create_sim_handler: CreateSimHandler,
         get_sim_by_id_handler: GetSimByIdHandler,
         run_decision_cycle_handler: RunSimDecisionCycleHandler,
+        set_profession_handler: SetSimProfessionHandler,
     ):
         self.create_sim_handler = create_sim_handler
         self.get_sim_by_id_handler = get_sim_by_id_handler
         self.run_decision_cycle_handler = run_decision_cycle_handler
+        self.set_profession_handler = set_profession_handler
 
     def create_new_sim(self, sim_data: CreateSimDto) -> CreateSimResponse:
         command = CreateSimCommand(
@@ -57,3 +66,12 @@ class SimController:
             feeling=final_state.get("feeling"),
             reflection=final_state.get("reflection"),
         )
+
+    def set_sim_profession(
+        self, sim_id: UUID, data: SetProfessionDto
+    ) -> GetSimByIdResponse:
+        command = SetSimProfessionCommand(
+            sim_id=sim_id, profession_id=data.profession_id
+        )
+        updated_sim = self.set_profession_handler.handle(command)
+        return GetSimByIdResponse.model_validate(updated_sim)

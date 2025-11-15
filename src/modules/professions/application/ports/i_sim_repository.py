@@ -41,6 +41,3 @@ class ISimRepository(IGenericRepository[Sim]):
     def update_sim_status(
         self, sim_id: UUID, feeling: str, action: str
     ) -> SimStatus: ...
-
-    @abstractmethod
-    def set_profession(self, sim_id: UUID, profession_id: UUID) -> Optional[Sim]: ...
