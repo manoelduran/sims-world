@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
 from uuid import UUID, uuid4
 from typing import List, Optional
+
+from src.modules.professions.domain.profession import Profession
 from .needs import SimNeeds
 from .status import SimStatus
 from .skill import Skill
@@ -20,7 +22,7 @@ class Sim(BaseModel):
     needs: SimNeeds
     status: SimStatus
     skills: List[Skill] = []
-
+    profession: Optional[Profession] = None
     relationships: List[Relationship] = []
     memories: List[Memory] = []
 

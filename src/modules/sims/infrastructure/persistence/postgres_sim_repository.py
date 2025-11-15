@@ -13,7 +13,6 @@ from src.modules.sims.infrastructure.persistence.relationship_model import (
 )
 from src.modules.sims.infrastructure.persistence.sim_model import SimModel
 from src.modules.sims.infrastructure.persistence.status_model import SimStatusModel
-from src.modules.sims.infrastructure.persistence.skill_model import SkillModel
 from src.modules.sims.infrastructure.persistence.memory_models import MemoryModel
 from ...domain.entities.sim import Sim
 from ...domain.entities.needs import SimNeeds
@@ -47,6 +46,7 @@ class PostgresSimRepository(ISimRepository):
                 joinedload(SimModel.skills),
                 # Eager loading de relacionamentos e memórias pode ser pesado,
                 # mas para um único Sim é geralmente aceitável.
+                joinedload(SimModel.profession),
                 joinedload(SimModel.memories),
             )
             .filter(SimModel.id == sim_id)
@@ -166,3 +166,16 @@ class PostgresSimRepository(ISimRepository):
         self._db.commit()
         self._db.refresh(status_model)
         return SimStatus.model_validate(status_model)
+
+    def set_profession(self, sim_id: UUID, profession_id: UUID) -> Optional[Sim]:
+        sim_model = self._db.query(SimModel).filter(SimModel.id == sim_id).first()
+
+        if not sim_model:
+            return None  # Ou lançar um SimNotFoundError
+
+        # Atualiza o ID da profissão
+        sim_model.profession_id = profession_id
+        self._db.commit()
+
+        # Retorna o Sim completo e atualizado, já com a profissão carregada
+        return self.find_full_by_id(sim_id)

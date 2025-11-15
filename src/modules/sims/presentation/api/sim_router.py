@@ -1,5 +1,9 @@
 from uuid import UUID
 from fastapi import APIRouter, Depends, status
+from src.modules.sims.presentation.dto.set_profession_dto import SetProfessionDto
+from src.modules.sims.application.commands.handlers.set_sim_profession_handler import (
+    SetSimProfessionHandler,
+)
 from src.modules.sims.application.commands.handlers.run_sim_decision_cycle_handler import (
     RunSimDecisionCycleHandler,
 )
@@ -18,6 +22,7 @@ from src.modules.sims.dependencies import (
     get_create_sim_handler,
     get_get_sim_by_id_handler,
     get_run_sim_decision_cycle_handler,
+    get_set_sim_profession_handler,
 )
 from src.modules.sims.application.commands.handlers.create_sim_handler import (
     CreateSimHandler,
@@ -34,11 +39,15 @@ def get_sim_controller(
     run_decision_handler: RunSimDecisionCycleHandler = Depends(
         get_run_sim_decision_cycle_handler
     ),
+    set_profession_handler: SetSimProfessionHandler = Depends(
+        get_set_sim_profession_handler
+    ),
 ) -> SimController:
     return SimController(
         create_sim_handler=create_handler,
         get_sim_by_id_handler=get_by_id_handler,
         run_decision_cycle_handler=run_decision_handler,
+        set_profession_handler=set_profession_handler,
     )
 
 
@@ -75,3 +84,16 @@ def sim_perceive_route(
     controller: SimController = Depends(get_sim_controller),
 ):
     return controller.perceive_and_act(sim_id, data)
+
+
+@router.patch(
+    "/sims/{sim_id}/profession",
+    response_model=GetSimByIdResponse,
+    summary="Define a profissão de um Sim",
+)
+def set_sim_profession_route(
+    sim_id: UUID,
+    data: SetProfessionDto,
+    controller: SimController = Depends(get_sim_controller),
+):
+    return controller.set_sim_profession(sim_id, data)

@@ -42,7 +42,10 @@ class SimModel(Base):
         uselist=False,
         cascade="all, delete-orphan",
     )
-
+    profession_id = Column(
+        UUID(as_uuid=True), ForeignKey("professions.id"), nullable=True
+    )
+    profession = relationship("ProfessionModel", back_populates="sims")
     # current_location = relationship("ComodoModel", back_populates="sims_presentes")
     skills = relationship(
         "SkillModel", back_populates="sim", cascade="all, delete-orphan"

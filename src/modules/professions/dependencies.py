@@ -15,9 +15,6 @@ from src.modules.sims.application.commands.handlers.create_sim_handler import (
 from src.modules.sims.application.queries.handlers.get_full_sim_status_handler import (
     GetFullSimStatusHandler,
 )
-from src.modules.sims.application.commands.handlers.set_sim_profession_handler import (
-    SetSimProfessionHandler,
-)
 from src.core.database import get_db
 
 
@@ -48,9 +45,3 @@ def get_run_sim_decision_cycle_handler(
     return RunSimDecisionCycleHandler(
         sim_repository=repository, llm_service=llm_service
     )
-
-
-def get_set_sim_profession_handler(
-    repository: ISimRepository = Depends(get_sim_repository),
-) -> SetSimProfessionHandler:
-    return SetSimProfessionHandler(sim_repository=repository)

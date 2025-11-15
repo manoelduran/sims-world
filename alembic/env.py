@@ -18,6 +18,7 @@ from src.modules.sims.infrastructure.persistence.sim_model import *
 from src.modules.sims.infrastructure.persistence.skill_model import *
 from src.modules.sims.infrastructure.persistence.status_model import *
 from src.modules.sims.infrastructure.persistence.action_log_model import *
+from src.modules.professions.infrastructure.persistence.profession_model import *
 
 db_url_from_env = os.getenv("DATABASE_URL")
 
