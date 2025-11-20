@@ -18,11 +18,18 @@ class SimModel(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(255), nullable=False)
     personality_summary = Column(Text)
-    # world_id = Column(UUID(as_uuid=True), ForeignKey("game_worlds.id"), nullable=False)
-    # current_location_comodo_id = Column(
-    #     UUID(as_uuid=True), ForeignKey("comodos.id"), nullable=True
-    # )
+    # 1. World ID: A tabela continua sendo 'game_worlds', então isso não muda
+    world_id = Column(UUID(as_uuid=True), ForeignKey("game_worlds.id"), nullable=False)
 
+    # 2. Location: Mudou de 'comodos.id' para 'rooms.id'
+    # Renomeamos a coluna para manter o padrão em inglês
+    current_location_room_id = Column(
+        UUID(as_uuid=True), ForeignKey("rooms.id"), nullable=True
+    )
+
+    # 3. Relacionamento: Aponta para 'RoomModel' agora
+    # O back_populates deve bater com o que definimos em RoomModel ('sims_present')
+    current_location = relationship("RoomModel", back_populates="sims_present")
     parent_a_id = Column(UUID(as_uuid=True), ForeignKey("sims.id"), nullable=True)
     parent_b_id = Column(UUID(as_uuid=True), ForeignKey("sims.id"), nullable=True)
     age_in_days = Column(Integer, nullable=False, default=20)

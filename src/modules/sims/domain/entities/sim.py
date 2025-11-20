@@ -14,11 +14,10 @@ class Sim(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     name: str
     personality_summary: Optional[str] = None
-
+    world_id: UUID
     age_in_days: int
     life_stage: str
     is_alive: bool
-
     needs: SimNeeds
     status: SimStatus
     skills: List[Skill] = []

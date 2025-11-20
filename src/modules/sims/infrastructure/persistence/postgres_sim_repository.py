@@ -11,9 +11,14 @@ from src.modules.sims.infrastructure.persistence.needs_model import SimNeedsMode
 from src.modules.sims.infrastructure.persistence.relationship_model import (
     RelationshipModel,
 )
+from src.modules.professions.infrastructure.persistence.profession_model import (
+    ProfessionModel,
+)
 from src.modules.sims.infrastructure.persistence.sim_model import SimModel
 from src.modules.sims.infrastructure.persistence.status_model import SimStatusModel
 from src.modules.sims.infrastructure.persistence.memory_models import MemoryModel
+from src.modules.sims.infrastructure.persistence.skill_model import SkillModel
+from src.modules.world.infrastructure.persistence.room_model import RoomModel
 from ...domain.entities.sim import Sim
 from ...domain.entities.needs import SimNeeds
 from ...application.ports.i_sim_repository import ISimRepository
@@ -25,7 +30,14 @@ class PostgresSimRepository(ISimRepository):
 
     def save(self, entity: Sim) -> Sim:
         sim_data = entity.model_dump(
-            exclude={"needs", "status", "skills", "relationships", "memories"}
+            exclude={
+                "needs",
+                "status",
+                "skills",
+                "relationships",
+                "memories",
+                "profession",
+            }
         )
 
         sim_model = SimModel(**sim_data)

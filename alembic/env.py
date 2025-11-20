@@ -11,6 +11,13 @@ print(f"--- [env.py] Tentando carregar .env de: {dotenv_path}")  # DEBUG PRINT 1
 loaded = load_dotenv(dotenv_path=dotenv_path)
 from alembic import context
 from src.core.database import Base
+from src.modules.professions.infrastructure.persistence.profession_model import *
+from src.modules.world.infrastructure.persistence.game_world import *
+from src.modules.world.infrastructure.persistence.city_model import *
+from src.modules.world.infrastructure.persistence.house_model import *
+from src.modules.world.infrastructure.persistence.neighborhood_model import *
+from src.modules.world.infrastructure.persistence.object_model import *
+from src.modules.world.infrastructure.persistence.room_model import *
 from src.modules.sims.infrastructure.persistence.needs_model import *
 from src.modules.sims.infrastructure.persistence.memory_models import *
 from src.modules.sims.infrastructure.persistence.relationship_model import *
