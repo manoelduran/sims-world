@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from src.modules.professions.presentation.api import profession_router
 from src.modules.sims.presentation.api import sim_router
 
 app = FastAPI(
@@ -15,3 +16,4 @@ def health_check():
 
 
 app.include_router(sim_router.router, prefix="/api/v1", tags=["Sims"])
+app.include_router(profession_router.router, prefix="/api/v1", tags=["Professions"])
